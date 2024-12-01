@@ -4,18 +4,11 @@ export interface IUser {
   code: number;
   startName: string;
   address: string;
-  bankList: BankList[];
 }
 
-export interface BankList {
-  id: string;
-  branch: string;
-  accountNumber: string;
-  glAccountCode: string;
-  glAccountName: string;
-  iban: any;
-  currency: any;
-  currentBalance: string;
-  userPermission: string;
-  openingBalance: string;
+export class User {
+  id?: string;
+  email?: string;
+  password?: string;
+  token?: string;
 }

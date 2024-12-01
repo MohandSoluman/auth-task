@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectUser } from '../../state/auth/auth.selectors';
+
 import { Observable } from 'rxjs';
-import { logout } from '../../state/auth/auth.actions';
+
 
 @Component({
   selector: 'app-home',

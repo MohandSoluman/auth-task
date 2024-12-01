@@ -8,6 +8,7 @@ import { authReducer } from './state/auth/auth.reducer';
 import { AuthEffects } from './state/auth/auth.effects';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
+import { provideServerRendering } from '@angular/platform-server';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,5 +19,6 @@ export const appConfig: ApplicationConfig = {
     provideStore({ auth: authReducer }),
     provideEffects(AuthEffects),
     provideHttpClient(withFetch()),
+    provideServerRendering(),
   ],
 };

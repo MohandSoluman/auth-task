@@ -2,60 +2,44 @@ import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { loginStart } from '../../state/auth/auth.actions';
+import { User } from '../../types/user';
+import { AppState } from '../../store/app.states';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  private _router = inject(Router);
-  // private _fb = inject(FormBuilder);
-  // private _store = inject(Store);
+  loginForm: FormGroup;
+  private store = inject(Store<{ auth: AuthState }>);
+  private fb = inject(FormBuilder);
 
-  // loginForm = this._fb.group({
-  //   email: ['', Validators.required],
-  //   password: ['', Validators.required],
-  // });
+  constructor() {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
+  }
 
-  // login() {
-  //   if (this.loginForm.valid) {
-  //     this.http
-  //       .post<{ token: string; user: { name: string; email: string } }>(
-  //         'https://your-backend-api.com/login',
-  //         this.loginForm.value
-  //       )
-  //       .subscribe({
-  //         next: (response) => {
-  //           const { user, token } = response;
-
-  //           // Dispatch login success action
-  //           this.store.dispatch(loginSuccess({ user, token }));
-
-  //           // Navigate to the dashboard
-  //           this.router.navigate(['/users']);
-  //         },
-  //         error: () => {
-  //           alert('Login failed');
-  //         },
-  //       });
-  //   }
-  // }
-
+  onLogin() {
+    if (this.loginForm.valid) {
+      const { email, password } = this.loginForm.value;
+      this.store.dispatch(login({ email, password }));
+    }
+  }
   signup() {
     this._router.navigateByUrl('/signup');
   }
-  login() {
-    this._router.navigate(['/users']);
-  }
+
   forgetPassword() {
     this._router.navigateByUrl('/forgetPassword');
   }
