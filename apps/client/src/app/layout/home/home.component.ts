@@ -8,9 +8,8 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-
 import { Observable } from 'rxjs';
-
+import { AppState } from '../../store/app.states';
 
 @Component({
   selector: 'app-home',
@@ -19,18 +18,14 @@ import { Observable } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   user$!: Observable<{ name: string; email: string } | null>;
 
   dropdownVisible = false;
 
   private _router = inject(Router);
   private _elementRef = inject(ElementRef);
-  private _store = inject(Store);
-
-  ngOnInit(): void {
-    this.user$ = this._store.select(selectUser);
-  }
+  private _store = inject(Store<AppState>);
 
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
@@ -47,4 +42,8 @@ export class HomeComponent implements OnInit {
       this.dropdownVisible = false;
     }
   }
+}
+
+function logout(): any {
+  throw new Error('Function not implemented.');
 }

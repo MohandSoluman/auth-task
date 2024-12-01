@@ -4,11 +4,12 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { authReducer } from './state/auth/auth.reducer';
-import { AuthEffects } from './state/auth/auth.effects';
+
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideServerRendering } from '@angular/platform-server';
+import { authReducer } from './store/reducers/auth.reducers';
+import { AuthEffects } from './store/effects/auth.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [

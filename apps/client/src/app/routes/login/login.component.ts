@@ -8,8 +8,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { User } from '../../types/user';
-import { AppState } from '../../store/app.states';
+import { login } from '../../store/actions/auth.actions';
+import { AuthState } from '../../store/reducers/auth.reducers';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +22,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   private store = inject(Store<{ auth: AuthState }>);
   private fb = inject(FormBuilder);
+  private _router = inject(Router);
 
   constructor() {
     this.loginForm = this.fb.group({

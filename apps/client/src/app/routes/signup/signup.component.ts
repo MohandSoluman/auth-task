@@ -7,6 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthState } from '../../store/reducers/auth.reducers';
+import { Store } from '@ngrx/store';
+import { signup } from '../../store/actions/auth.actions';
 
 @Component({
   selector: 'app-signup',
@@ -19,6 +22,7 @@ export class SignupComponent {
   signupForm: FormGroup;
   private store = inject(Store<{ auth: AuthState }>);
   private fb = inject(FormBuilder);
+  private _router = inject(Router);
 
   constructor() {
     this.signupForm = this.fb.group({
