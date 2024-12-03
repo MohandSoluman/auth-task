@@ -157,17 +157,7 @@
           [ngClass]="{ hidden: !dropdownVisible }"
           id="dropdown"
         >
-          <!-- <div class="py-3 px-4">
-            <span
-              class="block text-sm font-semibold text-gray-900 dark:text-white"
-              >{{ user$?.name }}</span
-            >
-            <span
-              class="block text-sm text-gray-900 truncate dark:text-white"
-              >{{ user$?.email }}</span
-            >
-          </div> -->
-          <div class="py-3 px-4">
+         <div class="py-3 px-4">
             <ng-container *ngIf="user$ | async as user">
               <span
                 class="block text-sm font-semibold text-gray-900 dark:text-white"

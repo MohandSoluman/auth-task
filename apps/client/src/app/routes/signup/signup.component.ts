@@ -1,40 +1,49 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthState } from '../../store/reducers/auth.reducers';
-import { Store } from '@ngrx/store';
-import { signup } from '../../store/actions/auth.actions';
+import { AuthService } from '../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
 })
-export class SignupComponent {
-  signupForm: FormGroup;
-  private store = inject(Store<{ auth: AuthState }>);
+export class SignupComponent implements OnInit {
+  signupForm: FormGroup = new FormGroup({});
   private fb = inject(FormBuilder);
   private _router = inject(Router);
+  private _authService = inject(AuthService);
 
-  constructor() {
+  ngOnInit(): void {
     this.signupForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required],
     });
   }
 
-  onSignup() {
-    if (this.signupForm.valid) {
-      const { email, password } = this.signupForm.value;
-      this.store.dispatch(signup({ email, password }));
+  signup(): void {
+    if (this.signupForm?.valid) {
+      const { name, email, password, confirmPassword } = this.signupForm.value;
+      this._authService
+        .signup({ name, email, password, confirmPassword })
+        .subscribe({
+          next: () => {
+            this._router.navigate(['/login']);
+          },
+          error: (err) => {
+            console.error('Signup failed', err);
+          },
+        });
     }
   }
   login() {

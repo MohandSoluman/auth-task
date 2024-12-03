@@ -7,9 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { login } from '../../store/actions/auth.actions';
-import { AuthState } from '../../store/reducers/auth.reducers';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -19,29 +17,42 @@ import { AuthState } from '../../store/reducers/auth.reducers';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  loginForm: FormGroup;
-  private store = inject(Store<{ auth: AuthState }>);
   private fb = inject(FormBuilder);
   private _router = inject(Router);
+  private _authService = inject(AuthService);
+  errorMessage = '';
 
-  constructor() {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
-  }
+  loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
 
-  onLogin() {
+  login() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.store.dispatch(login({ email, password }));
+
+      if (email && password) {
+        this._authService.login({ email, password }).subscribe({
+          next: () => {
+            this._router.navigate(['/products']);
+          },
+          error: (err) => {
+            alert(err.error?.message || 'Login failed');
+          },
+        });
+      } else {
+        alert('Email and password are required');
+      }
+    } else {
+      alert('Please fill out all fields correctly.');
     }
   }
-  signup() {
-    this._router.navigateByUrl('/signup');
+
+  goToSignup() {
+    this._router.navigate(['/signup']);
   }
 
-  forgetPassword() {
-    this._router.navigateByUrl('/forgetPassword');
+  goToForgotPassword() {
+    this._router.navigate(['/forgot-password']);
   }
 }

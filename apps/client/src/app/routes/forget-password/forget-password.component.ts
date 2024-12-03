@@ -7,9 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AuthState } from '../../store/reducers/auth.reducers';
-import { forgotPassword } from '../../store/actions/auth.actions';
 
 @Component({
   selector: 'app-forget-password',
@@ -20,7 +17,7 @@ import { forgotPassword } from '../../store/actions/auth.actions';
 })
 export class ForgetPasswordComponent {
   forgotPasswordForm: FormGroup;
-  private store = inject(Store<{ auth: AuthState }>);
+
   private fb = inject(FormBuilder);
 
   constructor() {
@@ -32,7 +29,6 @@ export class ForgetPasswordComponent {
   onForgotPassword() {
     if (this.forgotPasswordForm.valid) {
       const { email } = this.forgotPasswordForm.value;
-      this.store.dispatch(forgotPassword({ email }));
     }
   }
 }

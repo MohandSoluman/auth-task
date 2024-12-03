@@ -1,15 +1,7 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { Component, ElementRef, HostListener, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { AppState } from '../../store/app.states';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +17,6 @@ export class HomeComponent {
 
   private _router = inject(Router);
   private _elementRef = inject(ElementRef);
-  private _store = inject(Store<AppState>);
 
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
@@ -33,7 +24,6 @@ export class HomeComponent {
 
   signOut() {
     localStorage.removeItem('authToken');
-    this._store.dispatch(logout());
     this._router.navigateByUrl('/login');
   }
   @HostListener('document:click', ['$event'])

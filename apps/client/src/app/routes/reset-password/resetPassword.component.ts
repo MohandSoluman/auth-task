@@ -7,9 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AuthState } from '../../store/reducers/auth.reducers';
-import { resetPassword } from '../../store/actions/auth.actions';
 
 @Component({
   selector: 'app-reset-password',
@@ -20,7 +17,7 @@ import { resetPassword } from '../../store/actions/auth.actions';
 })
 export class ResetPasswordComponent {
   resetPasswordForm: FormGroup;
-  private store = inject(Store<{ auth: AuthState }>);
+
   private fb = inject(FormBuilder);
 
   constructor() {
@@ -32,7 +29,6 @@ export class ResetPasswordComponent {
   onResetPassword() {
     if (this.resetPasswordForm.valid) {
       const { password } = this.resetPasswordForm.value;
-      this.store.dispatch(resetPassword({ password }));
     }
   }
 }

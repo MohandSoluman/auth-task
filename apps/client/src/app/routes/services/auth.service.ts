@@ -1,37 +1,57 @@
-// src/app/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class AuthService {
   private apiUrl = 'http://localhost:3000/api/auth';
-  private user: { name: string; email: string } | null = null;
+  private loggedIn = new BehaviorSubject<boolean>(false);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  login(email: string, password: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, {
-      email,
-      password,
-    });
+  // Check if the user is logged in
+  isLoggedIn(): Observable<boolean> {
+    return this.loggedIn.asObservable();
   }
 
-  signup(email: string, password: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/signup`, { email, password });
+  // Signup
+  signup(data: {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/signup`, data);
   }
 
-  forgotPassword(email: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/forgot-password`, { email });
+  // Login
+  login(data: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, data).pipe(
+      tap((response: any) => {
+        localStorage.setItem('token', response.token); // Save JWT
+        this.loggedIn.next(true);
+      })
+    );
   }
 
-  resetPassword(password: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/reset-password`, { password });
-  }
-
+  // Logout
   logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    this.user = null;
+    localStorage.removeItem('token');
+    this.loggedIn.next(false);
+    this.router.navigate(['/login']);
+  }
+
+  // Forgot Password
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  // Reset Password
+  resetPassword(data: { token: string; newPassword: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, data);
   }
 }
