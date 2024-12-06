@@ -10,7 +10,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ManagementService } from '../services/management-service.service';
-import { IUser } from '../../types/user';
+import { IProduct } from '../../types/product';
 import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -34,15 +34,15 @@ import { TableModule } from 'primeng/table';
     ToastModule,
     IconFieldModule,
   ],
-  templateUrl: './user-managment.component.html',
-  styleUrl: './user-managment.component.css',
+  templateUrl: './product-managment.component.html',
+  styleUrl: './product-managment.component.css',
   providers: [MessageService],
 })
-export class UserManagmentComponent implements OnInit {
-  userId: string | null = null;
+export class ProductManagmentComponent implements OnInit {
+  productId: string | null = null;
   form!: FormGroup;
 
-  user?: IUser;
+  product?: IProduct;
 
   private _route = inject(ActivatedRoute);
   private _fb = inject(FormBuilder);
@@ -52,17 +52,19 @@ export class UserManagmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.userId = this._route.snapshot.paramMap.get('id');
-    if (this.userId) {
-      this.getUserById(this.userId);
+    this.productId = this._route.snapshot.paramMap.get('id');
+
+    if (this.productId) {
+      this.getProductById(this.productId);
     }
   }
 
-  getUserById(id: string) {
-    this._managementService.getUserById(id).subscribe({
-      next: (user) => {
-        this.user = user;
-        this.form.patchValue(this.user);
+  getProductById(id: string) {
+    this._managementService.getProductById(id).subscribe({
+      next: (product) => {
+        console.log(product);
+        this.product = product;
+        this.form.patchValue(this.product);
       },
       error: () => {
         this.showError();
@@ -78,11 +80,8 @@ export class UserManagmentComponent implements OnInit {
         Validators.compose([Validators.required, Validators.minLength(3)]),
       ],
       code: ['', Validators.required],
-      startName: ['', Validators.required],
-      address: [
-        '',
-        Validators.compose([Validators.required, Validators.minLength(10)]),
-      ],
+      category: ['', Validators.required],
+      price: ['', Validators.required],
     });
   }
   submitForm() {
@@ -91,26 +90,25 @@ export class UserManagmentComponent implements OnInit {
       return;
     }
 
-    const data: IUser = {
+    const data: IProduct = {
       ...this.form.value,
     };
 
-    // Update or create new user
-    if (this.userId) {
-      this._managementService.updateUser(this.userId, data).subscribe({
+    if (this.productId) {
+      this._managementService.updateProduct(this.productId, data).subscribe({
         next: () => {
-          this.showSuccess('User updated successfully.');
-          this.redirectToUsers();
+          this.showSuccess('Product updated successfully.');
+          this.redirectToProducts();
         },
         error: () => {
           this.showError();
         },
       });
     } else {
-      this._managementService.addUser(data).subscribe({
+      this._managementService.addProduct(data).subscribe({
         next: () => {
-          this.showSuccess('User added successfully.');
-          this.redirectToUsers();
+          this.showSuccess('product added successfully.');
+          this.redirectToProducts();
         },
         error: () => {
           this.showError();
@@ -120,11 +118,11 @@ export class UserManagmentComponent implements OnInit {
   }
   discard() {
     this.form.reset();
-    this._router.navigateByUrl('/users');
+    this._router.navigateByUrl('/products');
   }
 
-  redirectToUsers() {
-    this._router.navigateByUrl('/users').then(() => {
+  redirectToProducts() {
+    this._router.navigateByUrl('/products').then(() => {
       window.location.reload();
     });
   }

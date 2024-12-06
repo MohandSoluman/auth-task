@@ -11,9 +11,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
+import { IProduct } from '../../types/product';
 
 @Component({
-  selector: 'app-user-list',
+  selector: 'app-product-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -26,60 +27,56 @@ import { IconFieldModule } from 'primeng/iconfield';
     InputIconModule,
     IconFieldModule,
   ],
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.css'],
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.css'],
   providers: [MessageService],
 })
-export class UserListComponent implements OnInit {
-  users = signal<any[]>([]); // All users fetched from the backend
-  filteredUsers = signal<any[]>([]); // Filtered users based on the search term
-  searchTerm = signal<string>(''); // The current search term
+export class ProductListComponent implements OnInit {
+  products = signal<IProduct[]>([]);
+  totalProducts = 0;
+  currentPage = 1;
+  rowsPerPage = 10;
 
   managementService = inject(ManagementService);
   messageService = inject(MessageService);
 
   ngOnInit() {
-    this.loadUsers();
+    this.loadProducts();
   }
 
-  /**
-   * Fetch all users from the backend and initialize both users and filteredUsers.
-   */
-  loadUsers() {
-    this.managementService.getAllUsers().subscribe({
-      next: (users) => {
-        this.users.set(users);
-        this.filteredUsers.set(users);
-      },
-      error: () => {
-        this.showError('Failed to fetch users. Please try again later.');
-      },
-    });
+  loadProducts() {
+    this.managementService
+      .getAllProducts(this.currentPage, this.rowsPerPage)
+      .subscribe({
+        next: (response) => {
+          this.products.set(response.products);
+          this.totalProducts = response.total;
+        },
+        error: () => {
+          this.showError('Failed to fetch users. Please try again later.');
+        },
+      });
   }
-
-  /**
-   * Handle search input changes and filter the user list.
-   * @param event The input event.
-   */
-  onSearchChange(event: any) {
-    const val = event.target.value as string;
-    this.searchTerm.set(val);
-
-    if (val === '') {
-      this.filteredUsers.set(this.users());
-    } else {
-      const filtered = this.users().filter((user) =>
-        user.name.toLowerCase().includes(val.toLowerCase())
-      );
-      this.filteredUsers.set(filtered);
-    }
+  onPageChange(event: any) {
+    this.currentPage = event.page + 1;
+    this.rowsPerPage = event.rows;
+    this.loadProducts();
   }
+  // onSearchChange(event: any) {
+  //   const val = event.target.value as string;
+  //   this.searchTerm.set(val);
 
-  /**
-   * Delete a user by ID after confirming with the user.
-   * @param id The ID of the user to delete.
-   */
-  onDeleteUser(id: string) {
+  //   if (val === '') {
+  //     this.filteredUsers.set(this.users());
+  //   } else {
+  //     const filtered = this.users().filter((user) =>
+  //       user.name.toLowerCase().includes(val.toLowerCase())
+  //     );
+  //     this.filteredUsers.set(filtered);
+  //   }
+  // }
+
+  onDeleteProduct(id: string) {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -90,10 +87,10 @@ export class UserListComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.managementService.deleteUser(id).subscribe({
+        this.managementService.deleteProduct(id).subscribe({
           next: () => {
-            this.showSuccess('User deleted successfully.');
-            this.loadUsers(); // Reload the user list
+            this.showSuccess('product deleted successfully.');
+            this.loadProducts(); // Reload the user list
           },
           error: () => {
             this.showError('Failed to delete user. Please try again later.');
@@ -103,10 +100,6 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  /**
-   * Show a success message using PrimeNG's MessageService.
-   * @param message The message to display.
-   */
   showSuccess(message: string) {
     this.messageService.add({
       severity: 'success',
@@ -115,10 +108,6 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  /**
-   * Show an error message using PrimeNG's MessageService.
-   * @param message The message to display.
-   */
   showError(message: string) {
     this.messageService.add({
       severity: 'error',

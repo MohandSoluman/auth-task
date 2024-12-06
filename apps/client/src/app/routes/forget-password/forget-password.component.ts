@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forget-password',
@@ -15,12 +16,12 @@ import {
   templateUrl: './forget-password.component.html',
   styleUrl: './forget-password.component.css',
 })
-export class ForgetPasswordComponent {
-  forgotPasswordForm: FormGroup;
-
+export class ForgetPasswordComponent implements OnInit {
+  forgotPasswordForm: FormGroup = new FormGroup({});
   private fb = inject(FormBuilder);
+  private _router = inject(Router);
 
-  constructor() {
+  ngOnInit(): void {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
@@ -28,7 +29,15 @@ export class ForgetPasswordComponent {
 
   onForgotPassword() {
     if (this.forgotPasswordForm.valid) {
+      // Send email to user with reset password link
       const { email } = this.forgotPasswordForm.value;
+      console.log(`Reset password link sent to: ${email}`);
+      // Reset form
+      this.forgotPasswordForm.reset();
+      // Redirect to login page
+      this._router.navigate(['/login']);
+      // Or show success message
+      alert('Reset password link sent successfully');
     }
   }
 }

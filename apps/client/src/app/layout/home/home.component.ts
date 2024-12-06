@@ -1,7 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../routes/services/auth.service';
+import { User } from '../../types/user';
 
 @Component({
   selector: 'app-home',
@@ -10,20 +18,27 @@ import { Observable } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
-  user$!: Observable<{ name: string; email: string } | null>;
-
-  dropdownVisible = false;
-
+export class HomeComponent implements OnInit {
   private _router = inject(Router);
   private _elementRef = inject(ElementRef);
+  private _authService = inject(AuthService);
+  currentUser$: Observable<User | null> | undefined;
+  userLoggedIn = false;
+  dropdownVisible = false;
+
+  ngOnInit(): void {
+    this.currentUser$ = this._authService.currentUser$;
+    this.currentUser$.subscribe((user) => {
+      this.userLoggedIn = !!user;
+    });
+  }
 
   toggleDropdown() {
     this.dropdownVisible = !this.dropdownVisible;
   }
 
-  signOut() {
-    localStorage.removeItem('authToken');
+  signInOut() {
+    sessionStorage.removeItem('token');
     this._router.navigateByUrl('/login');
   }
   @HostListener('document:click', ['$event'])
@@ -32,8 +47,4 @@ export class HomeComponent {
       this.dropdownVisible = false;
     }
   }
-}
-
-function logout(): any {
-  throw new Error('Function not implemented.');
 }

@@ -2,7 +2,11 @@
 
 <p-table
   #dt1
-  [value]="filteredUsers()"
+  [value]="products()"
+  [rows]="rowsPerPage"
+  [totalRecords]="totalProducts"
+  [lazy]="true"
+  (onPage)="onPageChange($event)"
   [globalFilterFields]="['code', 'name', 'startName']"
   selectionMode="single"
   dataKey="id"
@@ -15,13 +19,7 @@
   <ng-template pTemplate="caption">
     <div class="flex align-items-center justify-between bg-white">
       <p-iconField iconPosition="right">
-        <input
-          pInputText
-          type="text"
-          placeholder=" Search With Name"
-          [(ngModel)]="searchTerm"
-          (input)="onSearchChange($event)"
-        />
+        <input pInputText type="text" placeholder=" Search With Name" />
         <p-inputIcon>
           <i class="pi pi-search"></i>
         </p-inputIcon>
@@ -32,7 +30,7 @@
       >
         <button
           class="flex items-center justify-center text-white bg-[#0bbac7] hover:bg-[#1da1f2]/90 focus:ring-4 focus:outline-none focus:ring-[#1da1f2]/50 font-medium rounded-lg text-sm px-12 py-2.5 text-center dark:focus:ring-[#1da1f2]/55 me-2 mb-2 gap-2"
-          routerLink="/user-management"
+          [routerLink]="['/product-management']"
         >
           <svg
             width="24"
@@ -77,30 +75,34 @@
 
   <ng-template pTemplate="header">
     <tr>
-      <th pSortableColumn="code" style="width: 20%">
-        Code <p-sortIcon field="code"></p-sortIcon>
-      </th>
       <th pSortableColumn="name" style="width: 20%">
         product Name <p-sortIcon field="name"></p-sortIcon>
       </th>
-      <th pSortableColumn="startName" style="width: 20%">
+      <th pSortableColumn="code" style="width: 20%">
+        Code <p-sortIcon field="code"></p-sortIcon>
+      </th>
+      <th pSortableColumn="category" style="width: 20%">
         Category <p-sortIcon field="startName"></p-sortIcon>
+      </th>
+      <th pSortableColumn="price" style="width: 20%">
+        Price <p-sortIcon field="price"></p-sortIcon>
       </th>
 
       <th style="width: 20%">Actions</th>
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="body" let-user>
+  <ng-template pTemplate="body" let-product>
     <tr>
-      <td>{{ user.code }}</td>
-      <td>{{ user.name }}</td>
-      <td>{{ user.startName }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.code }}</td>
+      <td>{{ product.category }}</td>
+      <td>{{ product.price }}</td>
       <td>
         <div class="px-4 py-2 flex space-x-2">
           <button
             class="flex p-2.5 bg-cyan-500 rounded-xl hover:rounded-3xl hover:bg-yellow-600 transition-all duration-300 text-white"
-            [routerLink]="['/user-management', user.id]"
+            [routerLink]="['/product-management', product._id]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +121,7 @@
           </button>
           <button
             class="flex p-2.5 bg-red-500 rounded-xl hover:rounded-3xl hover:bg-red-600 transition-all duration-300 text-white"
-            (click)="onDeleteUser(user.id)"
+            (click)="onDeleteProduct(product._id)"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

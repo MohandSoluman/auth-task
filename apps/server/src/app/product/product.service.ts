@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Product } from './entities/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ProductService {
@@ -47,6 +52,19 @@ export class ProductService {
     return { products, total, page, totalPages };
   }
 
+  async getProductById(userId: string, productId: string): Promise<Product> {
+    const product = await this.productModel.findById(productId).exec();
+    console.log(userId, product.userId.toString());
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${productId} not found`);
+    }
+
+    if (product.userId.toString() !== userId.toString()) {
+      throw new UnauthorizedException(`You do not have access to this product`);
+    }
+
+    return product;
+  }
   // Update a product owned by the user
   async updateProduct(
     userId: string,

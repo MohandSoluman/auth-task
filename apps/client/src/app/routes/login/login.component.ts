@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -16,16 +16,19 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  loginForm: FormGroup = new FormGroup({});
   private fb = inject(FormBuilder);
   private _router = inject(Router);
   private _authService = inject(AuthService);
   errorMessage = '';
 
-  loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
+  ngOnInit(): void {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+  }
 
   login() {
     if (this.loginForm.valid) {
@@ -53,6 +56,6 @@ export class LoginComponent {
   }
 
   goToForgotPassword() {
-    this._router.navigate(['/forgot-password']);
+    this._router.navigate(['/forgetPassword']);
   }
 }

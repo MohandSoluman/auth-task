@@ -104,23 +104,23 @@
         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
         type="text"
         pInputText
-        id="startName"
+        id="category"
         min="0"
-        formControlName="startName"
-        aria-describedby="startName-help"
+        formControlName="category"
+        aria-describedby="category-help"
         [ngClass]="{
           'is-invalid':
-            form.get('startName')?.touched && form.get('startName')?.invalid
+            form.get('category')?.touched && form.get('category')?.invalid
         }"
       />
-      @if(form.get('startName')?.touched && form.get('startName')?.invalid){
-      <small id="startName-help" class="invalid-feedback">
-        @if(form.get('startName')?.errors?.['required']){
+      @if(form.get('category')?.touched && form.get('category')?.invalid){
+      <small id="category-help" class="invalid-feedback">
+        @if(form.get('category')?.errors?.['required']){
 
-        <span>startName is required.</span>
-        }@else if(form.get('startName')?.errors?.['minlength']){
+        <span>category is required.</span>
+        }@else if(form.get('category')?.errors?.['minlength']){
 
-        <span>startName must be at least 1 character long.</span>
+        <span>category must be at least 1 character long.</span>
         }
       </small>
 
@@ -135,27 +135,26 @@
       <input
         class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
         pInputText
-        id="address"
-        formControlName="address"
-        aria-describedby="address-help"
+        id="price"
+        formControlName="price"
+        aria-describedby="price-help"
         [ngClass]="{
-          'is-invalid':
-            form.get('address')?.touched && form.get('address')?.invalid
+          'is-invalid': form.get('price')?.touched && form.get('price')?.invalid
         }"
       />
 
-      @if( form.get('address')?.touched && form.get('address')?.invalid){
+      @if( form.get('price')?.touched && form.get('price')?.invalid){
 
       <small
-        id="address-help"
+        id="price-help"
         class="text-red-600 text-sm mt-1 bg-red-100 px-2 py-1 rounded"
       >
-        @if(form.get('address')?.errors?.['required']){
+        @if(form.get('price')?.errors?.['required']){
 
-        <span>address is required.</span>
-        }@else if(form.get('address')?.errors?.['minlength']){
+        <span>price is required.</span>
+        }@else if(form.get('price')?.errors?.['minlength']){
 
-        <span>address must be at least 5 character long.</span>
+        <span>price must be at least 2 digit.</span>
         }
       </small>
 

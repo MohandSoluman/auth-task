@@ -8,9 +8,9 @@ import {
   Param,
   Query,
   UseGuards,
-  ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { ProductService } from './product.service';
@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Product } from './entities/product.schema';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { isValidObjectId } from 'mongoose';
 
 @UseGuards(JwtAuthGuard)
 @Controller('products')
@@ -48,12 +49,26 @@ export class ProductController {
     return this.productService.getUserProducts(userId, paginationDto);
   }
 
+  @Get(':id')
+  async getProductById(
+    @GetUser('_id') userId: string,
+    @Param('id') id: string
+  ): Promise<Product> {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid product ID format');
+    }
+    return this.productService.getProductById(userId, id);
+  }
+
   @Patch(':id')
   async updateProduct(
     @GetUser('_id') userId: string,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto
   ): Promise<Product> {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid product ID format');
+    }
     return this.productService.updateProduct(userId, id, updateProductDto);
   }
 
@@ -61,8 +76,11 @@ export class ProductController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteProduct(
     @GetUser('_id') userId: string,
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id') id: string
   ): Promise<void> {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Invalid product ID format');
+    }
     return this.productService.deleteProduct(userId, id);
   }
 
