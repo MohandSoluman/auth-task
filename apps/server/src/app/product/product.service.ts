@@ -54,7 +54,6 @@ export class ProductService {
 
   async getProductById(userId: string, productId: string): Promise<Product> {
     const product = await this.productModel.findById(productId).exec();
-    console.log(userId, product.userId.toString());
     if (!product) {
       throw new NotFoundException(`Product with ID ${productId} not found`);
     }
@@ -72,9 +71,9 @@ export class ProductService {
     updateProductDto: UpdateProductDto
   ): Promise<Product> {
     const product = await this.productModel.findOneAndUpdate(
-      { _id: productId, userId }, // Ensure user owns the product
+      { _id: productId, userId },
       updateProductDto,
-      { new: true } // Return the updated product
+      { new: true }
     );
 
     if (!product) {

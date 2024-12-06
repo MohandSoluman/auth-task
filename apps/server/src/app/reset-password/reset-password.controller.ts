@@ -8,7 +8,7 @@ import { ResetPasswordService } from './reset-password.service';
 export class ResetPasswordController {
   constructor(private readonly resetPasswordService: ResetPasswordService) {}
 
-  @Post('forgot')
+  @Post('forget')
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
     @Res() res: Response

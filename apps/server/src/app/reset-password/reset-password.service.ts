@@ -15,7 +15,6 @@ export class ResetPasswordService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
   async forgotPassword(email: string) {
-    // Find user by email
     const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new NotFoundException('No user found with this email');
@@ -32,15 +31,13 @@ export class ResetPasswordService {
     user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
     await user.save();
 
-     const resetURL = `${process.env.FRONTEND_URL}/reset-password?email=${email}?token=${resetToken}`;
-    
+    const resetURL = `${process.env.FRONTEND_URL}/resetPassword?email=${email}&token=${resetToken}`;
 
     try {
       await this.sendResetPasswordEmail(user.email, resetURL);
 
       return {
         message: 'Password reset link sent to your email',
-        resetToken,
         resetTokenSent: true,
       };
     } catch (error) {
@@ -118,7 +115,6 @@ export class ResetPasswordService {
           category: 'Integration Test',
         })
         .then(console.log, console.error);
-      console.log('Email sent successfully');
     } catch (error) {
       console.error('Error sending email:', error);
     }

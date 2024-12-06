@@ -46,16 +46,15 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    // Validate user
     const user = await this.validateUser(email, password);
 
-    // Generate JWT token
     const payload: AuthPayload = {
       sub: user._id.toString(),
+      name: user.name,
       email: user.email,
     };
     const token = this.jwtService.sign(payload, {
-      expiresIn: '8h', // 8-hour session
+      expiresIn: process.env.JWT_EXPIRATION || '8h', // 8-hour session
     });
 
     // Remove sensitive information
@@ -86,6 +85,7 @@ export class AuthService {
   async refreshToken(user: User) {
     const payload: AuthPayload = {
       sub: user._id.toString(),
+      name: user.name,
       email: user.email,
     };
 

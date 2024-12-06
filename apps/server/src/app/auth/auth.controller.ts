@@ -31,12 +31,6 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@GetUser() user) {
-    return user;
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Post('refresh-token')
   async refreshToken(@GetUser() user) {
     return this.authService.refreshToken(user);
@@ -45,7 +39,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Res() res: Response) {
-    // In JWT, logout is typically handled client-side by removing the token
     return res.status(HttpStatus.OK).json({
       message: 'Logged out successfully',
     });

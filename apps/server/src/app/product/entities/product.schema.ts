@@ -6,7 +6,7 @@ export class Product extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   code: string;
 
   @Prop({ required: true })
@@ -16,7 +16,7 @@ export class Product extends Document {
   price: number;
 
   @Prop({ required: true })
-  userId: string; // Associate the product with a user
+  userId: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

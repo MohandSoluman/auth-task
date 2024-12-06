@@ -42,7 +42,7 @@ export class ManagementService {
     id: string,
     updatedProduct: IProduct
   ): Observable<IProduct> {
-    return this.http.put<IProduct>(`${this.apiUrl}/${id}`, updatedProduct, {
+    return this.http.patch<IProduct>(`${this.apiUrl}/${id}`, updatedProduct, {
       headers: this.getAuthHeaders(),
     });
   }
