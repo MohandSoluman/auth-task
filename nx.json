@@ -15,7 +15,7 @@
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
-  "nxCloudId": "67494398a7a8855e5b18f55d",
+  "nxCloudId": "6755934fc9736bb907412372",
   "plugins": [
     {
       "plugin": "@nx/webpack/plugin",
@@ -25,17 +25,10 @@
         "previewTargetName": "preview"
       }
     },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    },
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } },
     {
       "plugin": "@nx/jest/plugin",
-      "options": {
-        "targetName": "test"
-      },
+      "options": { "targetName": "test" },
       "exclude": ["apps/server-e2e/**/*"]
     }
   ],
@@ -45,9 +38,7 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
     },
-    "server": {
-      "cache": true
-    }
+    "server": { "cache": true }
   },
   "generators": {
     "@nx/angular:application": {
@@ -56,8 +47,6 @@
       "style": "css",
       "unitTestRunner": "none"
     },
-    "@nx/angular:component": {
-      "style": "css"
-    }
+    "@nx/angular:component": { "style": "css" }
   }
 }
